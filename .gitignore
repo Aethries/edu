@@ -3,9 +3,16 @@ node_modules/
 out/
 *.tsbuildinfo
 .turbo/
+.wrangler/
+worker-configuration.d.ts
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+!.dev.vars.*.example
 dist/
 coverage/
 .idea/
 .env
 .env.*
 !.env.example
+!.env.*.example

@@ -1,0 +1,18 @@
+{
+    "extends": ["//"],
+    "tasks": {
+        "build": {
+            "env": ["NEXT_PUBLIC_API_URL"],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                ".env",
+                ".env.local",
+                ".env.production",
+                ".env.production.local"
+            ]
+        },
+        "dev": {
+            "env": ["NEXT_PUBLIC_API_URL"]
+        }
+    }
+}

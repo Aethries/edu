@@ -1,0 +1,68 @@
+{
+    "$schema": "../../node_modules/wrangler/config-schema.json",
+    "name": "edu-api-production",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-10-29",
+    "workers_dev": false,
+    "preview_urls": false,
+    "upload_source_maps": true,
+    "observability": { "enabled": true },
+    "vars": {
+        "ENVIRONMENT": "production",
+        "CORS_ORIGINS": "https://admin.example.com",
+        "AUTH_ENABLED": "true",
+        "AUTH_ISSUER": "https://identity.example.com/",
+        "AUTH_AUDIENCE": "edu-api",
+        "AUTH_JWKS_URL": "https://identity.example.com/.well-known/jwks.json",
+        "MAX_UPLOAD_BYTES": "5242880",
+        "REALTIME_TICKET_TTL_SECONDS": "30",
+        "OUTBOX_RETENTION_DAYS": "30",
+        "PROCESSED_JOBS_RETENTION_DAYS": "0",
+    },
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "edu-db-production",
+            "database_id": "REPLACE_WITH_PRODUCTION_D1_ID",
+            "migrations_dir": "drizzle",
+        },
+    ],
+    "r2_buckets": [
+        { "binding": "FILES", "bucket_name": "edu-files-production" },
+    ],
+    "queues": {
+        "producers": [{ "binding": "JOBS", "queue": "edu-jobs-production" }],
+        "consumers": [
+            {
+                "queue": "edu-jobs-production",
+                "max_batch_size": 10,
+                "max_batch_timeout": 5,
+                "max_retries": 5,
+                "retry_delay": 60,
+                "max_concurrency": 2,
+                "dead_letter_queue": "edu-jobs-dlq-production",
+            },
+            {
+                "queue": "edu-jobs-dlq-production",
+                "max_batch_size": 10,
+                "max_retries": 100,
+                "retry_delay": 300,
+                "max_concurrency": 1,
+            },
+        ],
+    },
+    "durable_objects": {
+        "bindings": [{ "name": "REALTIME", "class_name": "RealtimeRoom" }],
+    },
+    "exports": {
+        "RealtimeRoom": { "type": "durable-object", "storage": "sqlite" },
+    },
+    "ratelimits": [
+        {
+            "name": "API_RATE_LIMITER",
+            "namespace_id": "1003",
+            "simple": { "limit": 120, "period": 60 },
+        },
+    ],
+    "triggers": { "crons": ["* * * * *"] },
+}

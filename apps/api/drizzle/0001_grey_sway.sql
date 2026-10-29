@@ -1,0 +1,1 @@
+ALTER TABLE `realtime_tickets` ADD `session_expires_at` integer NOT NULL;

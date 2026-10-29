@@ -1,0 +1,23 @@
+{
+    "name": "@edu/common",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./http": "./src/schemas/http.ts",
+        "./organizations": "./src/schemas/organizations.ts",
+        "./storage": "./src/schemas/storage.ts",
+        "./realtime": "./src/schemas/realtime.ts",
+        "./iam": "./src/schemas/iam.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "typescript": "^6.0.3"
+    },
+    "dependencies": {
+        "zod": "^4.6.7"
+    }
+}

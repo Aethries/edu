@@ -35,4 +35,12 @@ npm run build
 - Use native `fetch`, `Intl.NumberFormat`, Day.js, selective `lodash-es` imports, and `@reactuses/core` hooks.
 - ESLint configuration and dependencies belong to this app. Formatting inherits the root Prettier and EditorConfig settings.
 
-The home page is intentionally blank. No authentication, Supabase, sample feature, or backend is configured.
+The home page is intentionally blank. No login UI, Supabase, or sample feature is configured.
+
+## API client
+
+Copy `.env.example` to `.env.local` before development; `.env.production.example` shows the deployment build value. `NEXT_PUBLIC_API_URL` is public and fixed at build time; never store secrets there.
+
+`src/configs/http.ts` exports `createApiClient(getAccessToken)`. Pass your identity SDK's current-token function; use `async () => null` only for public endpoints. The factory adds a bearer token per request, enforces same-origin API URLs, uses a 15-second timeout, disables cookies, and does not retry mutations. Do not mutate Axios global defaults. On SSR create an instance per request; do not share user credentials. Node redirects are disabled; the browser's redirect policy still applies, so API endpoints must not redirect to untrusted origins.
+
+Use `/v1/...` paths for business endpoints; Axios errors retain status and `response.data` (shared `ApiErrorResponse`) for feature-specific handling. No automatic refresh loop: the identity SDK owns renewal. Clear TanStack Query on logout/account switching. Runtime auth SDK configuration will be added only after selecting a provider; no invented client ID or secret.

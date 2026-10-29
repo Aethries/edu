@@ -3,6 +3,8 @@ node_modules/
 out/
 next-env.d.ts
 .turbo/
+.wrangler/
+worker-configuration.d.ts
 dist/
 coverage/
 package-lock.json

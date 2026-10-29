@@ -1,0 +1,38 @@
+{
+    "name": "@edu/api",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@edu/common": "*",
+        "@hono/zod-openapi": "^1.6.3",
+        "drizzle-orm": "^0.45.4",
+        "hono": "^4.13.14",
+        "jose": "^6.2.14",
+        "zod": "^4.6.7"
+    },
+    "scripts": {
+        "dev": "wrangler dev --local --port 8787 --test-scheduled",
+        "build": "wrangler deploy --dry-run --outdir dist",
+        "deploy": "wrangler deploy",
+        "lint": "eslint . --max-warnings 0",
+        "typegen": "wrangler types --strict-vars false",
+        "typecheck": "npm run typegen && tsc --noEmit",
+        "test": "npm run build && tsx --test tests/*.test.ts",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate:local": "wrangler d1 migrations apply DB --local",
+        "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.5",
+        "@types/node": "^26.6.6",
+        "drizzle-kit": "^0.31.11",
+        "eslint": "^9.39.5",
+        "eslint-config-prettier": "^10.1.8",
+        "miniflare": "^5.20261023.2-beta",
+        "tsx": "^4.23.15",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.72.1",
+        "wrangler": "^4.155.0"
+    }
+}

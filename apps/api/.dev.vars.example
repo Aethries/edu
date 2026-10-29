@@ -1,0 +1,21 @@
+# Copy to .dev.vars for local development only. No production credentials.
+ENVIRONMENT=development
+CORS_ORIGINS=http://localhost:3000
+# false disables protected routes (503). It NEVER bypasses authentication.
+AUTH_ENABLED=false
+# Set true only after configuring a trusted OIDC provider with RS256/ES256 JWTs.
+AUTH_ISSUER=https://identity.example.com/
+AUTH_AUDIENCE=edu-api
+AUTH_JWKS_URL=https://identity.example.com/.well-known/jwks.json
+MAX_UPLOAD_BYTES=5242880
+REALTIME_TICKET_TTL_SECONDS=30
+# Sent outbox records only; pending jobs are never removed by retention.
+OUTBOX_RETENTION_DAYS=30
+# 0 = keep deduplication records. Enable >=30 days only after defining a replay cutoff.
+# Retention must exceed Queue/DLQ retention AND all manual/external replay windows.
+PROCESSED_JOBS_RETENTION_DAYS=0
+# Cloud resources are Wrangler bindings, NOT environment credentials:
+# DB: D1, FILES: private R2, JOBS: Queue, REALTIME: Durable Object,
+# API_RATE_LIMITER: native Workers rate limiter.
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID belong to your shell/CI,
+# never Worker vars or browser env. Scope tokens to required resources.

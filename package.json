@@ -10,8 +10,12 @@
     "scripts": {
         "build": "turbo run build",
         "dev": "turbo run dev",
+        "dev:api": "turbo run dev --filter=@edu/api",
+        "dev:admin": "turbo run dev --filter=@edu/admin",
+        "dev:all": "turbo run dev",
         "lint": "turbo run lint",
         "typecheck": "turbo run typecheck",
+        "test": "turbo run test",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },
