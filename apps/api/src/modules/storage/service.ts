@@ -29,6 +29,7 @@ export function streamUpload(
     const prefix = new Uint8Array(Math.min(8, length));
     let prefixBytes = 0;
     let received = 0;
+    let lastByte: Uint8Array | undefined;
     const validated = body.pipeThrough(
         new TransformStream<Uint8Array, Uint8Array>({
             transform(chunk, controller) {
@@ -44,17 +45,28 @@ export function streamUpload(
                     if (prefixBytes < prefix.length) return;
                     if (!signatures[contentType](prefix))
                         throw new HTTPException(415);
-                    controller.enqueue(prefix);
+                    if (length <= prefix.length) {
+                        controller.enqueue(prefix.subarray(0, -1));
+                        lastByte = prefix.slice(-1);
+                    } else controller.enqueue(prefix);
                     chunk = chunk.subarray(take);
                 }
-                if (chunk.byteLength) controller.enqueue(chunk);
+                if (chunk.byteLength) {
+                    if (received === length) {
+                        controller.enqueue(chunk.subarray(0, -1));
+                        lastByte = chunk.slice(-1);
+                    } else controller.enqueue(chunk);
+                }
             },
-            flush() {
+            flush(controller) {
                 if (received !== length) throw new HTTPException(400);
+                // R2 can commit as soon as it receives the declared length. Release
+                // the final byte only after clean EOF, never from transform().
+                if (lastByte) controller.enqueue(lastByte);
             },
         }),
     );
-    // R2 requires a known-length stream. No whole-file buffering or partial object commit.
+    // R2 requires a known-length stream; retain the commit byte until validation completes.
     const fixed = new FixedLengthStream(length);
     const abort = new AbortController();
     return {
